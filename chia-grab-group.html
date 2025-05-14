@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <title>Chia tiền Grab Nhóm (Động)</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 500px;
+      margin: 40px auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      background: #f9f9f9;
+    }
+    input, select {
+      width: 100%;
+      padding: 6px;
+      margin: 4px 0 12px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+    button {
+      padding: 10px 15px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    pre {
+      background: #eef6ff;
+      padding: 10px;
+      border-radius: 5px;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+<body>
+  <h2>Chia tiền Grab nhóm</h2>
+
+  <label>Tổng tiền gốc:</label>
+  <input id="total" type="number" placeholder="Nhập tổng tiền gốc" />
+
+  <label>Tổng khuyến mãi:</label>
+  <input id="discount" type="number" placeholder="Cộng số màu xanh lá" />
+
+  <label>Phí không áp dụng KM:</label>
+  <input id="fees" type="number" placeholder="Phí dịch vụ..." />
+
+  <label>Số người đặt:</label>
+  <select id="numPeople" onchange="renderInputs()">
+    <option value="2">2 người</option>
+    <option value="3" selected>3 người</option>
+    <option value="4">4 người</option>
+    <option value="5">5 người</option>
+    <option value="6">6 người</option>
+    <option value="7">7 người</option>
+    <option value="8">8 người</option>
+    <option value="9">9 người</option>
+    <option value="10">10 người</option>
+  </select>
+
+  <div id="peopleInputs"></div>
+
+  <button onclick="calc()">Tính chia</button>
+
+  <h3>Kết quả:</h3>
+  <pre id="result">Nhập dữ liệu và bấm Tính chia</pre>
+
+  <script>
+    function renderInputs() {
+      const num = +document.getElementById('numPeople').value;
+      const container = document.getElementById('peopleInputs');
+      container.innerHTML = '';
+      for (let i = 1; i <= num; i++) {
+        container.innerHTML += `
+          <label>Tiền người ${i} đặt:</label>
+          <input type="number" id="p${i}" />
+        `;
+      }
+    }
+
+    renderInputs(); // render ban đầu
+
+    function calc() {
+      const total = +document.getElementById('total').value;
+      const discount = +document.getElementById('discount').value;
+      const fees = +document.getElementById('fees').value;
+      const num = +document.getElementById('numPeople').value;
+
+      const effectiveDiscount = discount - fees;
+      const kmRate = effectiveDiscount / total;
+
+      let output = '';
+      let totalPaid = 0;
+
+      for (let i = 1; i <= num; i++) {
+        const amount = +document.getElementById(`p${i}`).value;
+        const km = Math.round(amount * kmRate);
+        const final = Math.round(amount - km);
+        totalPaid += final;
+        output += `👉 Người ${i}: Trả ${final} đ (Giảm ${km} đ)\n`;
+      }
+
+      output += `\n💰 Tổng thanh toán: ${totalPaid} đ`;
+      document.getElementById('result').textContent = output;
+    }
+  </script>
+</body>
+</html>
